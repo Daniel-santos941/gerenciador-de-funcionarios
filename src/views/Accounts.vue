@@ -1,11 +1,12 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import MainButton from '../components/MainButton.vue';
 import FormLogin from '../components/FormLogin/index.vue'
 import FormRegister from '../components/FormRegister/index.vue'
 import userService from '../services/users'
 
-
+const router = useRouter()
 const isLogin = ref(true)
 
 function toRegister() {
@@ -20,6 +21,19 @@ async function registerUser(user) {
         isLogin.value = true
     }
 }
+
+async function loginUser(user) {
+    const response = await userService.login(user)
+    const {data, status} = response
+    if (status === 200) {
+        const user = data.user 
+        const token = data.access_token
+        localStorage.setItem("token", token)
+        localStorage.setItem("user", JSON.stringify(user))
+
+        router.push({name: "pagina_inicial"})
+    }   
+}
 </script>
 
 <template>
@@ -27,7 +41,7 @@ async function registerUser(user) {
         <div class="banner"></div>
         <div class="content">
             <div v-if="isLogin" class="account-container">
-                <FormLogin/>
+                <FormLogin @login="loginUser"/>
                 <div class="register-link">
                     <p>Ainda não possui cadastro?</p>
                     <MainButton @click="toRegister">Cadastre-se aqui</MainButton>

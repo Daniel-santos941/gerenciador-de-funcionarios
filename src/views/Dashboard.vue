@@ -1,11 +1,16 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from 'vue-router';
 import CardView from "../components/CardView/index.vue"
 import Acute from "../assets/img/acute.svg"
 import Calendar from "../assets/img/calendar_month.svg"
 import Metabolism from "../assets/img/metabolism.svg"
 import Comment from "../assets/img/comment.svg"
 import MainButton from "../components/MainButton.vue";
+
+const router = useRouter()
+
+const userName = ref("")
 
 const navigation = ref([
     {
@@ -36,12 +41,26 @@ const navigation = ref([
         nome: "Mensagens"
     },
 ])
+
+function logout() {
+    localStorage.clear()
+    router.push("/")
+}
+
+onMounted(()=> {
+    const user = localStorage.getItem("user")
+    const parsedUser = JSON.parse(user)
+    userName.value = parsedUser.name
+    console.log(userName.value)
+})
+
+
 </script>
 
 <template>
     <div class="dashboard-container">
         <div class="content-box">
-            <h2>Bem-vindo, Daniel!</h2>
+            <h2>Bem-vindo, {{userName}}</h2>
             <div class="boxes">
                 <CardView :cardProps="navigation"/>
             </div>
@@ -59,7 +78,9 @@ const navigation = ref([
                     <p><span>Número de matrícula:</span> 0211456378</p>
                     <p><span>Data de admissão:</span> 14/02/2019</p>
                 </div>
-                <MainButton type="submit">Deslogar usuário</MainButton>
+                <div class="container-button">
+                    <MainButton @click="logout">Deslogar usuário</MainButton>
+                </div>
             </div>
         </div>
     </div>
@@ -109,10 +130,18 @@ const navigation = ref([
 .dashboard-container .user-card .user-image {
     margin: 10px auto;
     width: 160px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .dashboard-container .user-card .user-image img {
     width: 100%;
+}
+
+.dashboard-container .user-card .user-image p {
+    text-align: center;
+    font-weight: medium;
 }
 
 .dashboard-container .user-card .infos {
@@ -127,5 +156,10 @@ const navigation = ref([
 
 .dashboard-container .user-card .infos span {
     font-weight: bold;
+}
+
+.dashboard-container .content-box .container-button {
+    text-align: center;
+    margin-top: 50px;
 }
 </style>

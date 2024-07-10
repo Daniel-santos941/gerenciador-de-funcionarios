@@ -2,27 +2,20 @@
 import { reactive } from "vue";
 import MainButton from "../MainButton.vue";
 
+const emit = defineEmits(["login"]);
+
 const user = reactive({
     email: localStorage.getItem("user_email") || "",
     password: "",
-})
+});
 
-function login() {
-    required(user.password)
-    console.log(user)
-}
-
-function required(val) {
-    if(val && val.length < 5) {
-        alert("A senha não pode ter menos que 5 dígitos!")
-        return
-    }
-    return true
+function authLogin() {
+    emit("login", user);
 }
 </script>
 
 <template>
-    <form class="form-login" @submit.prevent="login">
+    <form class="form-login" @submit.prevent="authLogin">
         <h3>Entre</h3>
         <div class="input-data">
             <label>Email do usuário</label>

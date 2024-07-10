@@ -1,10 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Accounts from "../views/Accounts.vue"
+import Accounts from "../views/Accounts.vue";
 import Dashboard from "../views/Dashboard.vue";
 import PageStructure from "../template/PageStructure.vue";
 
+const authGuard = (to, from, next) => {
+    if (localStorage.getItem("token")) {
+        next();
+    } else {
+        next("/");
+    }
+}
+
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL), 
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: "/",
@@ -15,6 +23,7 @@ const router = createRouter({
             path: "/app",
             name: "template",
             component: PageStructure,
+            beforeEnter: authGuard,
             redirect: "/app/dashboard",
             children: [
                 {
@@ -25,6 +34,6 @@ const router = createRouter({
             ]
         }
     ]
-})
+});
 
-export default router
+export default router;
